@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.trovilho.cursomc.domain.Categoria;
+import com.trovilho.cursomc.dto.CategoriaDto;
 import com.trovilho.cursomc.repositories.CategoriaRepository;
 import com.trovilho.cursomc.services.exceptions.DateIntegrationException;
 import com.trovilho.cursomc.services.exceptions.ObjectNotFoundException;
@@ -60,10 +61,14 @@ public class CategoriaServices {
 	}
 
 	public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
-		
+
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		
+
 		return repository.findAll(pageRequest);
+	}
+
+	public Categoria fromDTO(CategoriaDto objDto) {
+		return new Categoria(objDto.getId(), objDto.getNome());
 	}
 
 }
