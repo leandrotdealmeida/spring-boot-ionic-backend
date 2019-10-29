@@ -28,10 +28,11 @@ public class Cliente implements Serializable {
 	private String nome;
 	private String cpfOuCnpj;
 	private Integer tipo;
-	
+
 	@OneToMany(mappedBy = "cliente")
-	private List<Endereco> enderecos = new ArrayList<>(); 
-	//duvida na diferença entre colocar ou não Tipo dentro ArrayList Generics, acho que tanto faz 
+	private List<Endereco> enderecos = new ArrayList<>();
+	// duvida na diferença entre colocar ou não Tipo dentro ArrayList Generics, acho
+	// que tanto faz
 
 	@ElementCollection
 	@CollectionTable(name = "TELEFONE")
@@ -45,13 +46,13 @@ public class Cliente implements Serializable {
 
 	}
 
-	public Cliente(Integer id, String email, String nome, String cpfOuCnpj, TipoCliente tipo) {
+		public Cliente(Integer id, String email, String nome, String cpfOuCnpj, TipoCliente tipo) {
 		super();
 		this.id = id;
 		this.email = email;
 		this.nome = nome;
 		this.cpfOuCnpj = cpfOuCnpj;
-		this.tipo = tipo.getCod();
+		this.tipo = (tipo == null) ? null : tipo.getCod();
 	}
 
 	public Integer getId() {
