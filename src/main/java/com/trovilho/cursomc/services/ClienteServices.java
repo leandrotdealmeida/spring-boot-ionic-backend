@@ -34,8 +34,6 @@ public class ClienteServices {
 		return repository.save(newObj);
 	}
 
-	
-
 	public void delete(Integer id) {
 		find(id);
 
@@ -63,10 +61,10 @@ public class ClienteServices {
 
 		return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null);
 	}
-	
+
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
-		
+
 	}
 }
