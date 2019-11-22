@@ -14,14 +14,13 @@ public class ClienteNewDto implements Serializable {
 
 	@NotEmpty(message = "Preenchimento Obrigatório")
 	@Length(min = 5, max = 120, message = "O tamanho deve ser entre 5  e 80 caracteres")
-	private String email;
+	private String nome;
 	@NotEmpty(message = "Preenchimento Obrigatório")
 	@Length(min = 5, max = 120, message = "O tamanho deve ser entre 5  e 80 caracteres")
-	private String nome;
+	private String email;
 	@NotEmpty(message = "Preenchimento Obrigatório")
 	private String cpfOuCnpj;
 	private Integer tipo;
-
 	@NotEmpty(message = "Preenchimento Obrigatório")
 	private String logradouro;
 	@NotEmpty(message = "Preenchimento Obrigatório")
