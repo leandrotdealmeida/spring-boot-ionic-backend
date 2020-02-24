@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.trovilho.cursomc.domain.ItemPedido;
 import com.trovilho.cursomc.domain.PagamentoComBoleto;
@@ -32,6 +33,12 @@ public class PedidoServices {
 	
 	@Autowired
 	ItemPedidoRepository itemPedidoRepository;
+	
+	@Autowired
+	ClienteServices clienteServices;
+	
+	@Autowired
+	private EmailService emailService;
 
 	public Pedido find(Integer id) {
 		Optional<Pedido> obj = repository.findById(id);
@@ -39,9 +46,11 @@ public class PedidoServices {
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Pedido.class.getName()));
 	}
 
+	@Transactional
 	public Pedido insert(Pedido obj) {
 		obj.setId(null);
 		obj.setInstante(new Date());
+		obj.setCliente(clienteServices.find(obj.getCliente().getId()));
 		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		obj.getPagamento().setPedido(obj);
 		if(obj.getPagamento() instanceof PagamentoComBoleto) {
@@ -52,10 +61,12 @@ public class PedidoServices {
 		pagamentoRepository.save(obj.getPagamento());
 		for(ItemPedido ip: obj.getItens()) {
 			ip.setDesconto(0.0);
+			ip.setProduto(produtoService.find(ip.getProduto().getId()));
 			ip.setPreco(produtoService.find(ip.getProduto().getId()).getPreco());
 			ip.setPedido(obj);
 		}
 		itemPedidoRepository.saveAll(obj.getItens());
+		emailService.sendOrderConfimationEmail(obj);
 		return obj;
 		
 	}

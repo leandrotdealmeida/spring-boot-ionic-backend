@@ -8,18 +8,25 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.trovilho.cursomc.services.DbService;
+import com.trovilho.cursomc.services.EmailService;
+import com.trovilho.cursomc.services.MockEmailService;
 
 @Configuration
 @Profile("test")
 public class TestConfig {
-	
+
 	@Autowired
 	DbService dbService;
-	
+
 	@Bean
-	public boolean instanciateDatabase() throws ParseException {		
+	public boolean instanciateDatabase() throws ParseException {
 		dbService.instanciateTestDatabase();
 		return true;
+	}
+
+	@Bean
+	public EmailService emailService() {
+		return new MockEmailService();
 	}
 
 }
