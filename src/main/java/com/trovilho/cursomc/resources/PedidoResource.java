@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.trovilho.cursomc.domain.Categoria;
 import com.trovilho.cursomc.domain.Pedido;
-import com.trovilho.cursomc.dto.CategoriaDto;
-import com.trovilho.cursomc.services.CategoriaServices;
 import com.trovilho.cursomc.services.PedidoServices;
 
 @RestController
