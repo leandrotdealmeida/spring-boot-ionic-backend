@@ -19,6 +19,7 @@ import com.trovilho.cursomc.domain.PagamentoComCartao;
 import com.trovilho.cursomc.domain.Pedido;
 import com.trovilho.cursomc.domain.Produto;
 import com.trovilho.cursomc.domain.enums.EstadoPagamento;
+import com.trovilho.cursomc.domain.enums.Perfil;
 import com.trovilho.cursomc.domain.enums.TipoCliente;
 import com.trovilho.cursomc.repositories.CategoriaRepository;
 import com.trovilho.cursomc.repositories.CidadeRepository;
@@ -121,14 +122,20 @@ public class DbService {
 
 		Cliente cli1 = new Cliente(null, "leandrotrovilho@gmail.com", "Maria Silva", "36378912377", TipoCliente.PESSOAFISICA);
 		cli1.getTelefones().addAll(Arrays.asList("27363323", "9838393"));
+		
+		Cliente cli2 = new Cliente(null, "leandro.almeida@lello.com.br", "Ana Silva", "96083107091", TipoCliente.PESSOAFISICA);
+		cli2.getTelefones().addAll(Arrays.asList("27363234", "9838399"));
+		cli2.addPerfil(Perfil.ADMIN);
 
 		Endereco end1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
 		Endereco end2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
+		Endereco end3 = new Endereco(null, "Avenida Do Mato", "111", null, "Centro", "38771023", cli2, c2);
 
-		cli1.getEnderecos().addAll(Arrays.asList(end1, end2));
+		
+		cli1.getEnderecos().addAll(Arrays.asList(end1, end2, end3));
 
-		clienteRepository.saveAll(Arrays.asList(cli1));
-		enderecoRepository.saveAll(Arrays.asList(end1, end2));
+		clienteRepository.saveAll(Arrays.asList(cli1, cli2));
+		enderecoRepository.saveAll(Arrays.asList(end1, end2, end3));
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 
