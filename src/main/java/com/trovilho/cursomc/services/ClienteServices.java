@@ -2,7 +2,6 @@ package com.trovilho.cursomc.services;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.ObjDoubleConsumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,7 +28,7 @@ import com.trovilho.cursomc.services.exceptions.ObjectNotFoundException;
 public class ClienteServices {
 	
 	@Autowired
-	BCryptPasswordEncoder bCryptPasswordEncoder;
+	BCryptPasswordEncoder pe;
 
 	@Autowired
 	ClienteRepository repository;
@@ -90,7 +89,7 @@ public class ClienteServices {
 
 	public Cliente fromDTO(ClienteNewDto objDto) {
 		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(),
-				TipoCliente.toEnum(objDto.getTipo()),bCryptPasswordEncoder.encode(objDto.getSenha()));
+				TipoCliente.toEnum(objDto.getTipo()),pe.encode(objDto.getSenha()));
 		// Cidade cid = repositoryCidade.findById(objDto.getCidadeId()).get();
 		Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
 		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(),
