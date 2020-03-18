@@ -15,12 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.trovilho.cursomc.domain.Cidade;
 import com.trovilho.cursomc.domain.Cliente;
 import com.trovilho.cursomc.domain.Endereco;
+import com.trovilho.cursomc.domain.enums.Perfil;
 import com.trovilho.cursomc.domain.enums.TipoCliente;
 import com.trovilho.cursomc.dto.ClienteDto;
 import com.trovilho.cursomc.dto.ClienteNewDto;
 import com.trovilho.cursomc.repositories.CidadeRepository;
 import com.trovilho.cursomc.repositories.ClienteRepository;
 import com.trovilho.cursomc.repositories.EnderecoRepository;
+import com.trovilho.cursomc.security.UserSS;
+import com.trovilho.cursomc.services.exceptions.AuthorizationException;
 import com.trovilho.cursomc.services.exceptions.DateIntegrationException;
 import com.trovilho.cursomc.services.exceptions.ObjectNotFoundException;
 
@@ -40,6 +43,12 @@ public class ClienteServices {
 	EnderecoRepository repositoryEndereco;
 
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
