@@ -1,10 +1,12 @@
 package com.trovilho.cursomc.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +33,7 @@ import com.trovilho.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class ClienteServices {
-	
+
 	@Autowired
 	private BCryptPasswordEncoder pe;
 
@@ -43,17 +45,28 @@ public class ClienteServices {
 
 	@Autowired
 	private EnderecoRepository repositoryEndereco;
-	
+
 	@Autowired
 	private S3Service s3Service;
 
+	@Autowired
+	private ImageService imageService;
+
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
+	
+	@Value("${img.profile.size}")
+	private Integer size;
+	
+	
+
 	public Cliente find(Integer id) {
-		
+
 		UserSS user = UserService.authenticated();
-		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+		if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
 			throw new AuthorizationException("Acesso negado");
 		}
-		
+
 		Optional<Cliente> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
@@ -103,7 +116,7 @@ public class ClienteServices {
 
 	public Cliente fromDTO(ClienteNewDto objDto) {
 		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(),
-				TipoCliente.toEnum(objDto.getTipo()),pe.encode(objDto.getSenha()));
+				TipoCliente.toEnum(objDto.getTipo()), pe.encode(objDto.getSenha()));
 		// Cidade cid = repositoryCidade.findById(objDto.getCidadeId()).get();
 		Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
 		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(),
@@ -124,22 +137,21 @@ public class ClienteServices {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
 	}
-	
-	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		//autentica User UserSS
-		UserSS user = UserService.authenticated();
-		if(user == null) {
-			throw new AuthorizationException("Acesso negado");
-			
-		}
-		// retornar uri pra URI
-		URI uri =  s3Service.uploadFile(multipartFile);
-		//salva Uri no Cliente
-		Cliente cliente = find(user.getId());
-		cliente.setImageUrl(uri.toString());
-		repository.save(cliente);
-		
-		return uri;		
-	}
 
+	public URI uploadProfilePicture(MultipartFile multipartFile) {
+		// autentica User UserSS
+		UserSS user = UserService.authenticated();
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado");
+
+		}
+
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		jpgImage = imageService.cropSquare(jpgImage);
+		jpgImage = imageService.resize(jpgImage, size)
+				
+;		String fileName = prefix + user.getId() + ".jpg";
+		
+		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
+	}
 }
