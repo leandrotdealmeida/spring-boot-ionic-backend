@@ -33,50 +33,45 @@ public class ClienteResource {
 	
 	@RequestMapping(value="/{id}",method = RequestMethod.GET)
 	public ResponseEntity<Cliente> find(@PathVariable Integer id) {
-
-		Cliente obj = service.find(id);
-		
+		Cliente obj = service.find(id);			
 		return ResponseEntity.ok().body(obj);
+	}
+	
+	@RequestMapping(value="/email", method = RequestMethod.GET)
+	public ResponseEntity<Cliente> findByEmail(@RequestParam("value") String email){
+		Cliente obj = service.findByEmail(email);			
+		return ResponseEntity.ok().body(obj);		
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDto objDto) {
-
 		Cliente obj = service.fromDTO(objDto);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}").buildAndExpand(obj.getId()).toUri();
+				.path("/{id}").buildAndExpand(obj.getId()).toUri();		
 		return ResponseEntity.created(uri).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDto objDto, @PathVariable Integer id) {
-		
+	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDto objDto, @PathVariable Integer id) {		
 		Cliente obj = service.fromDTO(objDto);
 		obj.setId(id);
 		obj = service.update(obj);
-
 		return ResponseEntity.noContent().build();
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-
 		service.delete(id);
-
 		return ResponseEntity.noContent().build();
-
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<ClienteDto>> findAll() {
-
 		List<Cliente> list = service.findAll();
-
 		List<ClienteDto> listDto = list.stream().map(obj -> new ClienteDto(obj)).collect(Collectors.toList());
-
 		return ResponseEntity.ok().body(listDto);
 	}
 
@@ -86,17 +81,14 @@ public class ClienteResource {
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-
 		Page<Cliente> list = service.findPage(page, linesPerPage, orderBy, direction);
-
 		Page<ClienteDto> listDto = list.map(obj -> new ClienteDto(obj));
-
 		return ResponseEntity.ok().body(listDto);
 	}
 	
 	@RequestMapping(value="/picture", method = RequestMethod.POST)
 	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name="file") MultipartFile file) {
-		URI uri = service.uploadProfilePicture(file);		
+		URI uri = service.uploadProfilePicture(file);			
 		return ResponseEntity.created(uri).build();
 	}
 }
