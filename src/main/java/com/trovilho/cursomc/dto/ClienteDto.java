@@ -22,9 +22,7 @@ public class ClienteDto implements Serializable {
 	@Email(message = "Email invalido")
 	private String email;
 
-	public ClienteDto() {
-
-	}
+	public ClienteDto() {}
 
 	public ClienteDto(Cliente obj) {
 		id = obj.getId();

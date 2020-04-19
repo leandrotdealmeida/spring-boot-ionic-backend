@@ -23,7 +23,6 @@ import com.trovilho.cursomc.domain.enums.Perfil;
 import com.trovilho.cursomc.domain.enums.TipoCliente;
 import com.trovilho.cursomc.dto.ClienteDto;
 import com.trovilho.cursomc.dto.ClienteNewDto;
-import com.trovilho.cursomc.repositories.CidadeRepository;
 import com.trovilho.cursomc.repositories.ClienteRepository;
 import com.trovilho.cursomc.repositories.EnderecoRepository;
 import com.trovilho.cursomc.security.UserSS;
@@ -40,8 +39,8 @@ public class ClienteServices {
 	@Autowired
 	private ClienteRepository repository;
 
-	@Autowired
-	private CidadeRepository repositoryCidade;
+//	@Autowired
+//	private CidadeRepository repositoryCidade;
 
 	@Autowired
 	private EnderecoRepository repositoryEndereco;
